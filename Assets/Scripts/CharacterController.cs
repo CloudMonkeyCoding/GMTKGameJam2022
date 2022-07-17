@@ -9,11 +9,8 @@ public class CharacterController : MonoBehaviour
     Animator animator;
 
     public float movementSpeed;
-    public float regenerationRate;
 
     public GameManager gameManager;
-
-    private float timeBeforeRegenerate;
 
     public Sprite right;
     public Sprite left;
@@ -24,8 +21,6 @@ public class CharacterController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>(); 
         animator = GetComponent<Animator>();
-
-        timeBeforeRegenerate = regenerationRate;  
     }
 
     void Update()
