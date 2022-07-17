@@ -16,9 +16,11 @@ public class CombatManager : MonoBehaviour
 
     public Button[] playerButtons; //attack, reckless attack, potion
 
+    public Image fadePanel;
+
     private void Start() 
     {
-        Debug.Log(SceneHandler.activeEnemies[0]);
+        
     }
 
     public void PlayerTurn()
@@ -66,6 +68,18 @@ public class CombatManager : MonoBehaviour
             }
         }
         CheckEnemies();
+    }
+
+    IEnumerator fadeOut()
+    {
+        float color = 1;
+        while (color > 0)
+        {
+            fadePanel.color = new Color(0, 0, 0, color);
+            yield return new WaitForSeconds(0.05f);
+            color -= 0.05f;
+        }
+        
     }
 
     void CheckEnemies()
