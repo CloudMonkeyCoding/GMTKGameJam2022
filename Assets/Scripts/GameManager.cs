@@ -1,6 +1,7 @@
 using System.Collections; 
 using System.Collections.Generic; 
 using UnityEngine; 
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,9 +13,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject pauseMenuUI;
 
-    public int maxHP;
-    public int maxSheildDurability;
-    public int startPotionCount;
+    public GameObject[] enemies;
 
     void Update()
     {
@@ -25,18 +24,23 @@ public class GameManager : MonoBehaviour
             else
                 Pause();
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+    }
+
+    private void Start() 
+    {
+        player = SceneHandler.lastPlayerLocation; 
+        if(SceneHandler.restart)
         {
-            SceneHandler.activeEnemies[0] = true;
+            StartGame();
+            SceneHandler.restart = false;
         }
-        Debug.Log(SceneHandler.activeEnemies[0]);
     }
 
     public void StartGame()
     {
-        PlayerStats.hp = maxHP;
-        PlayerStats.sheildDurability = maxSheildDurability;
-        PlayerStats.potionCount = startPotionCount;
+        PlayerStats.hp = PlayerStats.maxHP;
+        PlayerStats.sheildDurability = PlayerStats.maxSheildDurability;
+        PlayerStats.potionCount = PlayerStats.startPotionCount;
 
         player = startingPosition;
     }
@@ -53,6 +57,11 @@ public class GameManager : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         gamePaused = true;
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     public void QuitGame()

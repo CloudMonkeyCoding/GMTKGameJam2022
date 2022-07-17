@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 public class CombatManager : MonoBehaviour
 {
@@ -16,15 +18,22 @@ public class CombatManager : MonoBehaviour
 
     public Button[] playerButtons; //attack, reckless attack, potion
 
-    public Image fadePanel;
+    public Animator fadePanel;
+
+    public TextMeshPro GKHP;
+    public TextMeshPro GHP;
 
     private void Start() 
     {
-        
+        PlayerTurn();
     }
 
     public void PlayerTurn()
     {
+        if(PlayerStats.hp < PlayerStats.maxHP)
+        {
+            PlayerStats.hp = PlayerStats.hp + 1;
+        }
         foreach(Button button in playerButtons)
         {
             if(PlayerStats.potionCount < 0)
@@ -38,10 +47,20 @@ public class CombatManager : MonoBehaviour
 
     public void EnemyTurn()
     {
+        DeactivatePlayerButtons();
+    }
+
+    public void DeactivatePlayerButtons()
+    {
         foreach(Button button in playerButtons)
         {
             button.interactable = false;
         }
+    }
+
+    IEnumerator timeBeforeNext()
+    {
+        yield return new WaitForSeconds(5f);
     }
 
     public void Result(int n)
@@ -70,18 +89,6 @@ public class CombatManager : MonoBehaviour
         CheckEnemies();
     }
 
-    IEnumerator fadeOut()
-    {
-        float color = 1;
-        while (color > 0)
-        {
-            fadePanel.color = new Color(0, 0, 0, color);
-            yield return new WaitForSeconds(0.05f);
-            color -= 0.05f;
-        }
-        
-    }
-
     void CheckEnemies()
     {
         int alive = 0;
@@ -94,7 +101,14 @@ public class CombatManager : MonoBehaviour
         }
         if(alive <= 0)
         {
-            playerWon = true;
+            EndGame();
         }
+    }
+
+    void EndGame()
+    {
+        fadePanel.SetBool("ending", true);
+        SceneHandler.activeEnemies[0] = false;
+        SceneManager.LoadScene(1);
     }
 }
