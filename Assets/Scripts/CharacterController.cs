@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class CharacterController : MonoBehaviour
 {
     Rigidbody2D rb;
-    SpriteRenderer sr;
+    Animator animator;
 
     public float movementSpeed;
     public float regenerationRate;
@@ -15,10 +15,15 @@ public class CharacterController : MonoBehaviour
 
     private float timeBeforeRegenerate;
 
+    public Sprite right;
+    public Sprite left;
+    public Sprite front;
+    public Sprite back;
+
     private void Awake() 
     {
-        rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();  
+        rb = GetComponent<Rigidbody2D>(); 
+        animator = GetComponent<Animator>();
 
         timeBeforeRegenerate = regenerationRate;  
     }
@@ -34,10 +39,12 @@ public class CharacterController : MonoBehaviour
 
             rb.AddForce(force, ForceMode2D.Force);
 
-            sr.flipX = Input.mousePosition.x >= Screen.width / 2;
+            animator.SetBool("Right", horizontal > 0);
+            animator.SetBool("Left", horizontal < 0);
+            animator.SetBool("Back", vertical > 0);
+            animator.SetBool("Front", vertical < 0);
         }
     }
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
