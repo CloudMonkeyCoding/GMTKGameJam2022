@@ -5,15 +5,6 @@ using UnityEngine;
 public class EnemyActions : MonoBehaviour
 {
     public int hp = 7;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public CombatManager.Actions currentAction;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

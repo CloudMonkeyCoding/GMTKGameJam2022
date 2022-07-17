@@ -15,6 +15,11 @@ public class CharacterController : MonoBehaviour
 
     private float timeBeforeRegenerate;
 
+    public Sprite right;
+    public Sprite left;
+    public Sprite front;
+    public Sprite back;
+
     private void Awake() 
     {
         rb = GetComponent<Rigidbody2D>();
@@ -34,10 +39,24 @@ public class CharacterController : MonoBehaviour
 
             rb.AddForce(force, ForceMode2D.Force);
 
-            sr.flipX = Input.mousePosition.x >= Screen.width / 2;
+            if(horizontal > 0)
+            {
+                sr.sprite = right;
+            }
+            else if(horizontal < 0)
+            {
+                sr.sprite = left;
+            }
+            else if(vertical > 0)
+            {
+                sr.sprite = back;
+            }
+            else
+            {
+                sr.sprite = front;
+            }
         }
     }
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

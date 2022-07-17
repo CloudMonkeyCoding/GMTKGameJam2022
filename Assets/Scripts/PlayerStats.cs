@@ -6,4 +6,5 @@ public class PlayerStats : MonoBehaviour
 {
     public static int hp;
     public static int sheildDurability;
+    public static int potionCount;
 }
