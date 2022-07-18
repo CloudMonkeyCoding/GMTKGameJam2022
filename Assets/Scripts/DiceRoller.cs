@@ -5,28 +5,16 @@ using UnityEngine;
 public class DiceRoller : MonoBehaviour
 {
     public Sprite[] sides;
-    public SpriteRenderer sr;
+    SpriteRenderer sr;
 
     public bool rolling;
     public int activeSide = 0;
 
+    public CombatManager combatManager;
+
     void Start()
     {
         sr = GetComponent<SpriteRenderer>(); 
-    }
-
-    void Update()
-    {
-        sr.sprite = sides[activeSide];
-
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            StartRoll();
-        }
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            StopRoll();
-        }
     }
 
     public void StartRoll()
@@ -34,21 +22,18 @@ public class DiceRoller : MonoBehaviour
         StartCoroutine(randomRoll());
     }
 
-    void StopRoll()
-    {
-        StopAllCoroutines();
-
-    }
-
     IEnumerator randomRoll()
     {
-        while(true)
+
+        for (int i = 0; i < 30; i++)
         {
             int newSide = Random.Range(0,6);
             while(newSide == activeSide)
                 newSide = Random.Range(0,6);
             activeSide = newSide;
+            sr.sprite = sides[activeSide];
             yield return new WaitForSeconds(.1f);
         }
+        combatManager.Result(activeSide + 1);
     }
 }

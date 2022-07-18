@@ -18,14 +18,17 @@ public class CombatManager : MonoBehaviour
 
     public Button[] playerButtons; //attack, reckless attack, potion
 
-    public Animator fadePanel;
+    public GameObject fadePanel;
 
-    public TextMeshPro GKHP;
-    public TextMeshPro GHP;
+    public TextMeshProUGUI GKHP;
+    public TextMeshProUGUI GHP;
 
     private void Start() 
     {
         PlayerTurn();
+        fadePanel.GetComponent<Animator>().SetTrigger("FadeStart");
+        StartCoroutine(activateFade(false));
+        UpdateUI();
     }
 
     public void PlayerTurn()
@@ -47,7 +50,7 @@ public class CombatManager : MonoBehaviour
 
     public void EnemyTurn()
     {
-        DeactivatePlayerButtons();
+        
     }
 
     public void DeactivatePlayerButtons()
@@ -61,6 +64,7 @@ public class CombatManager : MonoBehaviour
     IEnumerator timeBeforeNext()
     {
         yield return new WaitForSeconds(5f);
+        EnemyTurn();
     }
 
     public void Result(int n)
@@ -87,6 +91,13 @@ public class CombatManager : MonoBehaviour
             }
         }
         CheckEnemies();
+        UpdateUI();
+    }
+
+    void UpdateUI()
+    {
+        GKHP.text = "HP: " + PlayerStats.hp;
+        GHP.text = "HP: " + chosenEnemy.GetComponent<EnemyActions>().hp;
     }
 
     void CheckEnemies()
@@ -94,7 +105,7 @@ public class CombatManager : MonoBehaviour
         int alive = 0;
         foreach(GameObject enemy in enemies)
         {
-            if(enemy.GetComponent<EnemyActions>().hp <= 0)
+            if(enemy.GetComponent<EnemyActions>().hp >= 0)
             {
                 alive++;
             }
@@ -107,8 +118,14 @@ public class CombatManager : MonoBehaviour
 
     void EndGame()
     {
-        fadePanel.SetBool("ending", true);
+        fadePanel.GetComponent<Animator>().SetBool("ending", true);
         SceneHandler.activeEnemies[0] = false;
         SceneManager.LoadScene(1);
+    }
+
+    IEnumerator activateFade(bool n)
+    {
+        yield return new WaitForSeconds(1.1f);
+        fadePanel.SetActive(n);
     }
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    public static int maxHP;
-    public static int maxSheildDurability;
-    public static int startPotionCount;
+    public static int maxHP = 25;
+    public static int maxSheildDurability = 5;
+    public static int startPotionCount = 1;
 
     public static int hp;
     public static int sheildDurability;
