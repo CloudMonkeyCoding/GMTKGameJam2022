@@ -15,6 +15,7 @@ public class PlayerActions : MonoBehaviour
         diceRoller.StartRoll();
         combatManager.DeactivatePlayerButtons();
         GKAnimator.SetTrigger("Reckless Attack");
+        combatManager.chosenEnemy.GetComponent<Animator>().SetTrigger("Hurt");
     }
 
     public void Attack()
@@ -23,6 +24,7 @@ public class PlayerActions : MonoBehaviour
         diceRoller.StartRoll();
         combatManager.DeactivatePlayerButtons();
         GKAnimator.SetTrigger("Attack");
+        combatManager.chosenEnemy.GetComponent<Animator>().SetTrigger("Hurt");
     }
 
     public void Block()

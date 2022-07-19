@@ -1739,7 +1739,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 531cf7b3abd6f214b82fb47b67e417d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2124,6 +2124,8 @@ MonoBehaviour:
   fadePanel: {fileID: 468528805}
   GKHP: {fileID: 942601442}
   GHP: {fileID: 288189004}
+  GKAnimator: {fileID: 1422284367}
+  diceRoller: {fileID: 1330621019}
 --- !u!4 &1657597890
 Transform:
   m_ObjectHideFlags: 0

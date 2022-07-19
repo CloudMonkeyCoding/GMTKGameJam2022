@@ -23,8 +23,16 @@ public class CombatManager : MonoBehaviour
     public TextMeshProUGUI GKHP;
     public TextMeshProUGUI GHP;
 
+    public Animator GKAnimator;
+
+    public DiceRoller diceRoller;
+
     private void Start() 
     {
+        PlayerStats.hp = PlayerStats.maxHP;
+        PlayerStats.sheildDurability = PlayerStats.maxSheildDurability;
+        PlayerStats.potionCount = PlayerStats.startPotionCount;
+
         PlayerTurn();
         fadePanel.GetComponent<Animator>().SetTrigger("FadeStart");
         StartCoroutine(activateFade(false));
@@ -33,24 +41,26 @@ public class CombatManager : MonoBehaviour
 
     public void PlayerTurn()
     {
+        playersTurn = true;
         if(PlayerStats.hp < PlayerStats.maxHP)
         {
             PlayerStats.hp = PlayerStats.hp + 1;
         }
         foreach(Button button in playerButtons)
         {
-            if(PlayerStats.potionCount < 0)
-            {
-                playerButtons[2].interactable = true;
-            }
-            playerButtons[1].interactable = true;
             playerButtons[0].interactable = true;
+            playerButtons[1].interactable = true;
+            playerButtons[2].interactable = PlayerStats.sheildDurability > 0;
+            playerButtons[3].interactable = PlayerStats.potionCount > 0;
         }
     }
 
     public void EnemyTurn()
     {
-        
+        playersTurn = false;
+        diceRoller.StartRoll();
+        enemies[0].GetComponent<Animator>().SetTrigger("Attack");
+        GKAnimator.SetTrigger("Hurt");
     }
 
     public void DeactivatePlayerButtons()
@@ -74,24 +84,39 @@ public class CombatManager : MonoBehaviour
             switch(playerActions.currentAction)
             {
                 default:
-                case Actions.Attack:            chosenEnemy.GetComponent<EnemyActions>().hp -= n;       break;
-                case Actions.RecklessAttack:    chosenEnemy.GetComponent<EnemyActions>().hp -= n * 2;   break;
-                case Actions.Potion:            PlayerStats.hp += n;                                    break;
+                case Actions.Attack:            
+                    chosenEnemy.GetComponent<EnemyActions>().hp -= n;       
+                    break;
+                case Actions.RecklessAttack:    
+                    chosenEnemy.GetComponent<EnemyActions>().hp -= n * 2;   
+                    break;
+                case Actions.Block:
+                    break;
+                case Actions.Potion:            
+                    PlayerStats.hp += n;
+                    if(PlayerStats.hp > PlayerStats.maxHP)
+                        PlayerStats.hp = PlayerStats.maxHP;
+                    PlayerStats.potionCount -= 1;                                     
+                    break;
             }
         }
         else
         {
             foreach(GameObject enemy in enemies)
             {
-                switch(enemy.GetComponent<EnemyActions>().currentAction)
-                {
-                    default:
-                    case Actions.Attack: PlayerStats.hp -= n;       break;
-                }
+                PlayerStats.hp -= n;  
             }
         }
         CheckEnemies();
         UpdateUI();
+        if(playersTurn)
+        {
+            EnemyTurn();
+        }
+        else
+        {
+            PlayerTurn();
+        }
     }
 
     void UpdateUI()
