@@ -9,6 +9,7 @@ public class DiceRoller : MonoBehaviour
 
     public bool rolling;
     public int activeSide = 0;
+    public int rollTime;
 
     public CombatManager combatManager;
 
@@ -25,7 +26,7 @@ public class DiceRoller : MonoBehaviour
     IEnumerator randomRoll()
     {
 
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < rollTime; i++)
         {
             int newSide = Random.Range(0,6);
             while(newSide == activeSide)

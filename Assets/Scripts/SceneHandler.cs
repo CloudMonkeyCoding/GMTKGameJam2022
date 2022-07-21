@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SceneHandler
 {
-    public static bool[] activeEnemies = new bool[3];
-    public static Transform lastPlayerLocation;
+    public static bool[] activeEnemies = new bool[4];
+    public static int currentEnemy;
+    public static Vector3 lastPlayerLocation;
 
     public static bool restart = true;
 }

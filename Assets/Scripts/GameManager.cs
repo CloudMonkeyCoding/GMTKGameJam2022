@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] enemies;
 
+    public GameObject fadePanel;
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape)) 
@@ -28,19 +30,30 @@ public class GameManager : MonoBehaviour
 
     private void Start() 
     {
-        player = SceneHandler.lastPlayerLocation; 
+        player.position = SceneHandler.lastPlayerLocation; 
         if(SceneHandler.restart)
         {
             StartGame();
             SceneHandler.restart = false;
         }
+        for (int i = 0; i < 4; i++)
+        {
+            enemies[i].SetActive(SceneHandler.activeEnemies[i]);
+        }
+        StartCoroutine(ActivateFade());
     }
+         
 
     public void StartGame()
     {
         PlayerStats.hp = PlayerStats.maxHP;
         PlayerStats.sheildDurability = PlayerStats.maxSheildDurability;
         PlayerStats.potionCount = PlayerStats.startPotionCount;
+
+        SceneHandler.activeEnemies[0] = true;
+        SceneHandler.activeEnemies[1] = true;
+        SceneHandler.activeEnemies[2] = true;
+        SceneHandler.activeEnemies[3] = true;
 
         player = startingPosition;
     }
@@ -61,11 +74,20 @@ public class GameManager : MonoBehaviour
 
     public void Menu()
     {
+        SceneHandler.restart = true;
         SceneManager.LoadScene(0);
     }
 
     public void QuitGame()
     {
         Application.Quit();
+    }
+        
+    IEnumerator ActivateFade()
+    {
+        fadePanel.SetActive(true);
+        fadePanel.GetComponent<Animator>().SetTrigger("FadeStart");
+        yield return new WaitForSeconds(1.1f);
+        fadePanel.SetActive(false);
     }
 }

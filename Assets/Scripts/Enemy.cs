@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     private Transform Target;
     private int wayPointIndex = 0;
 
-    public int sceneIndex;
+    public int enemyIndex;
 
     public Transform[] wayPoints;
 
@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
 
     public float range;
     public float speed;
+
+    public bool boss;
 
     void Start()
     {

@@ -19,6 +19,7 @@ public class CombatManager : MonoBehaviour
     public Button[] playerButtons; //attack, reckless attack, potion
 
     public GameObject fadePanel;
+    public GameObject gameOverPanel;
 
     public TextMeshProUGUI GKHP;
     public TextMeshProUGUI GHP;
@@ -27,21 +28,22 @@ public class CombatManager : MonoBehaviour
 
     public DiceRoller diceRoller;
 
+    public float timePerTurn;
+
+    public bool boss;
+
     private void Start() 
     {
-        PlayerStats.hp = PlayerStats.maxHP;
-        PlayerStats.sheildDurability = PlayerStats.maxSheildDurability;
-        PlayerStats.potionCount = PlayerStats.startPotionCount;
-
         PlayerTurn();
         fadePanel.GetComponent<Animator>().SetTrigger("FadeStart");
-        StartCoroutine(activateFade(false));
+        StartCoroutine(ActivateFade());
         UpdateUI();
     }
 
     public void PlayerTurn()
     {
         playersTurn = true;
+        
         if(PlayerStats.hp < PlayerStats.maxHP)
         {
             PlayerStats.hp = PlayerStats.hp + 1;
@@ -50,31 +52,44 @@ public class CombatManager : MonoBehaviour
         {
             playerButtons[0].interactable = true;
             playerButtons[1].interactable = true;
-            playerButtons[2].interactable = PlayerStats.sheildDurability > 0;
+            
             playerButtons[3].interactable = PlayerStats.potionCount > 0;
         }
     }
 
     public void EnemyTurn()
     {
+        playerButtons[2].interactable = PlayerStats.sheildDurability > 0;
         playersTurn = false;
         diceRoller.StartRoll();
         enemies[0].GetComponent<Animator>().SetTrigger("Attack");
         GKAnimator.SetTrigger("Hurt");
+        StartTimerForNext();
     }
 
     public void DeactivatePlayerButtons()
     {
-        foreach(Button button in playerButtons)
-        {
-            button.interactable = false;
-        }
+        playerButtons[0].interactable = false;
+        playerButtons[1].interactable = false;
+        playerButtons[3].interactable = false;
+    }
+
+    public void StartTimerForNext()
+    {
+        StartCoroutine(timeBeforeNext());
     }
 
     IEnumerator timeBeforeNext()
     {
-        yield return new WaitForSeconds(5f);
-        EnemyTurn();
+        yield return new WaitForSeconds(timePerTurn);
+        if(playersTurn)
+        {
+            EnemyTurn();
+        }
+        else
+        {
+            PlayerTurn();
+        }
     }
 
     public void Result(int n)
@@ -90,8 +105,6 @@ public class CombatManager : MonoBehaviour
                 case Actions.RecklessAttack:    
                     chosenEnemy.GetComponent<EnemyActions>().hp -= n * 2;   
                     break;
-                case Actions.Block:
-                    break;
                 case Actions.Potion:            
                     PlayerStats.hp += n;
                     if(PlayerStats.hp > PlayerStats.maxHP)
@@ -99,24 +112,32 @@ public class CombatManager : MonoBehaviour
                     PlayerStats.potionCount -= 1;                                     
                     break;
             }
+            CheckEnemies();
         }
         else
         {
-            foreach(GameObject enemy in enemies)
+            if(boss)
+                n *= 2;
+            switch(playerActions.currentAction)
             {
-                PlayerStats.hp -= n;  
+                default:
+                    PlayerStats.hp -= n; 
+                    break;
+                case Actions.Block:
+                    break;
+                case Actions.RecklessAttack:
+                    PlayerStats.hp -= n * 2;
+                    break;
             }
+            if(PlayerStats.hp <= 0)
+            {
+                PlayerStats.hp = 0;
+                gameOverPanel.SetActive(true);
+            }
+            GKAnimator.SetBool("Block", false);
+            
         }
-        CheckEnemies();
         UpdateUI();
-        if(playersTurn)
-        {
-            EnemyTurn();
-        }
-        else
-        {
-            PlayerTurn();
-        }
     }
 
     void UpdateUI()
@@ -130,27 +151,38 @@ public class CombatManager : MonoBehaviour
         int alive = 0;
         foreach(GameObject enemy in enemies)
         {
-            if(enemy.GetComponent<EnemyActions>().hp >= 0)
+            if(enemy.GetComponent<EnemyActions>().hp > 0)
             {
                 alive++;
             }
         }
         if(alive <= 0)
         {
-            EndGame();
+            StartCoroutine(EndGame());
+            
         }
     }
 
-    void EndGame()
+    IEnumerator EndGame()
     {
-        fadePanel.GetComponent<Animator>().SetBool("ending", true);
-        SceneHandler.activeEnemies[0] = false;
+        fadePanel.SetActive(true);
+        fadePanel.GetComponent<Animator>().SetTrigger("FadeEnd");
+        SceneHandler.activeEnemies[SceneHandler.currentEnemy] = false;
+        yield return new WaitForSeconds(1.1f);
         SceneManager.LoadScene(1);
     }
 
-    IEnumerator activateFade(bool n)
+    IEnumerator ActivateFade()
     {
+        fadePanel.SetActive(true);
+        fadePanel.GetComponent<Animator>().SetTrigger("FadeStart");
         yield return new WaitForSeconds(1.1f);
-        fadePanel.SetActive(n);
+        fadePanel.SetActive(false);
+    }
+
+    public void Menu()
+    {
+        SceneHandler.restart = true;
+        SceneManager.LoadScene(0);
     }
 }

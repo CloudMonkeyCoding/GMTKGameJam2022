@@ -46,7 +46,19 @@ public class CharacterController : MonoBehaviour
         if(!collision.gameObject.CompareTag("Enemy"))
             return;
         
-        SceneHandler.lastPlayerLocation = transform;
-        SceneManager.LoadScene(collision.gameObject.GetComponent<Enemy>().sceneIndex); 
+        SceneHandler.currentEnemy = collision.gameObject.GetComponent<Enemy>().enemyIndex;
+        SceneHandler.lastPlayerLocation = transform.position;
+        if(!collision.gameObject.GetComponent<Enemy>().boss)
+            StartCoroutine(EnterNewScene("Combat Scene")); 
+        else
+            StartCoroutine(EnterNewScene("Combat Scene Boss")); 
+    }   
+
+    IEnumerator EnterNewScene(string sceneName)
+    {
+        gameManager.fadePanel.SetActive(true);
+        gameManager.fadePanel.GetComponent<Animator>().SetTrigger("FadeEnd");
+        yield return new WaitForSeconds(1.1f);
+        SceneManager.LoadScene(sceneName);
     }
 }

@@ -12,6 +12,7 @@ public class PlayerActions : MonoBehaviour
     public void RecklessAttack()
     {
         currentAction = CombatManager.Actions.RecklessAttack;
+        combatManager.StartTimerForNext();
         diceRoller.StartRoll();
         combatManager.DeactivatePlayerButtons();
         GKAnimator.SetTrigger("Reckless Attack");
@@ -21,6 +22,7 @@ public class PlayerActions : MonoBehaviour
     public void Attack()
     {
         currentAction = CombatManager.Actions.Attack;
+        combatManager.StartTimerForNext();
         diceRoller.StartRoll();
         combatManager.DeactivatePlayerButtons();
         GKAnimator.SetTrigger("Attack");
@@ -30,14 +32,15 @@ public class PlayerActions : MonoBehaviour
     public void Block()
     {
         currentAction = CombatManager.Actions.Block;
-        diceRoller.StartRoll();
-        combatManager.DeactivatePlayerButtons();
-        GKAnimator.SetTrigger("Block");
+        GKAnimator.SetBool("Block", true);
+        PlayerStats.sheildDurability -= 1;
+        combatManager.playerButtons[2].interactable = false;
     }
 
     public void Potion()
     {
         currentAction = CombatManager.Actions.Potion;
+        combatManager.StartTimerForNext();
         diceRoller.StartRoll();
         combatManager.DeactivatePlayerButtons();
         GKAnimator.SetTrigger("Heal");
