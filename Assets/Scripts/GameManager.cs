@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject fadePanel;
 
+    public AudioManager audioManager;
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape)) 

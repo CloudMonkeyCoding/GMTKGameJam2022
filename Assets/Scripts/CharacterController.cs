@@ -38,6 +38,15 @@ public class CharacterController : MonoBehaviour
             animator.SetBool("Left", horizontal < 0);
             animator.SetBool("Back", vertical > 0);
             animator.SetBool("Front", vertical < 0);
+
+            if(horizontal != 0 || vertical != 0)
+            {
+                gameManager.audioManager.Play("footsteps");
+            }
+            else
+            {
+                gameManager.audioManager.Stop("footsteps");
+            }
         }
     }
 
